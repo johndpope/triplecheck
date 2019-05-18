@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import os
 import json
-from flask import Flask, flash, request, redirect, url_for, Response
+from flask import Flask, flash, request, redirect, url_for, Response, jsonify
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 
-UPLOAD_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/uploads'
+UPLOAD_FOLDER = '/home/ubuntu/triplecheck/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
@@ -22,10 +22,10 @@ def index():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        if 'file' not in request.files:
+        if 'file' not in request.json:
             flash('No file part')
             return redirect(request.url)
-        file = request.files['file']
+        file = request.json['file']
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
