@@ -22,10 +22,10 @@ def index():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        if 'file' not in request.json:
+        if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
-        file = request.json['file']
+        file = request.files['file']
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
