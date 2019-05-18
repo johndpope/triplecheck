@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
-from flask import Flask, flash, request, redirect, url_for
+import json
+from flask import Flask, flash, request, redirect, url_for, Response
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 
@@ -16,7 +17,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return "main index"
+    return "Welcome to nucypher node server - index"
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -31,7 +32,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return url_for('uploaded_file', filename=filename)
+            jsresp = [ { "name" : filename, "url" : url_for('uploaded_file', filename=filename)} ]
+            return Response(json.dumps(jsresp),  mimetype='application/json')
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -44,8 +46,7 @@ def upload_file():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
