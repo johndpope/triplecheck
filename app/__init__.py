@@ -31,8 +31,8 @@ class JSONEncoder(json.JSONEncoder):
 
 
 # Flask Upload & allowed extensions config
-UPLOAD_FOLDER = '/home/ubuntu/triplecheck/uploads'
-ENCRYPTED_FOLDER = '/home/ubuntu/triplecheck/encrypted'
+UPLOAD_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/uploads'
+ENCRYPTED_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/encrypted'
 ALLOWED_EXTENSIONS = set(['txt', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
@@ -55,13 +55,5 @@ SEEDNODE_URI = "https://localhost:11501"
 globalLogPublisher.addObserver(SimpleObserver())
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Connect to Ursula
-ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,federated_only=True,minimum_stake=0)
-
-#Define Demo Charaters
-ALICE = Alice(network_middleware=RestMiddleware(),known_nodes=[ursula],learn_on_same_thread=True,federated_only=True)
-BOB = Bob(known_nodes=[ursula],network_middleware=RestMiddleware(),federated_only=True,start_learning_now=True,learn_on_same_thread=True)
-
 
 from app.core import *
