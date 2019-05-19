@@ -29,18 +29,6 @@ def add_cors_headers(response):
 app.after_request(add_cors_headers)
 '''
 
-@app.errorhandler(404)
-def not_found(error):
-    """ error handler """
-    LOG.error(error)
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
-
-@app.route('/')
-def index():
-    """ static files serve """
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
 
 '''
 @app.route('/<path:path>')
