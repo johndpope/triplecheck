@@ -69,4 +69,6 @@ This will expose the following endpoints
  [Upload Endpoint](http://ec2-18-204-34-34.compute-1.amazonaws.com:5000/upload)
  
  
- [Decrypt Endpoint](http://ec2-18-204-34-34.compute-1.amazonaws.com:5000/decrypt)
+ [Decrypt Endpoint](http://ec2-18-204-34-34.compute-1.amazonaws.com:5000/decrypt) 
+ 
+ Use "910e70066195060e29f2c0e986e5859d211d5a381951a847185c7aa3a7831a7e" for the first box. "ethnewyork" for second box and hit decrypt.
