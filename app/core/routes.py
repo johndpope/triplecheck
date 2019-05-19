@@ -42,18 +42,19 @@ def sha256sum(filename):
 
 def decrypt(enchash, passlabel):
     data = mongo.db.encrypted.find_one({"hash": enchash})
-    pubkey, posterstamp = getPolicyKey(data.policy)
+    pubkey, posterstamp = getPolicyKey(data['policy'])
     decryptedfulltext = ""
     if data is not None:
-        with open((os.path.join(app.config['UPLOAD_FOLDER'], data.name)), 'rb') as file:
+        with open((os.path.join(app.config['UPLOAD_FOLDER'], data['name'])), 'rb') as file:
             cleartext = file.readlines()
-            enrico = Enrico(policy_encrypting_key=getPolicyKey(pubkey))
-            single_passage_ciphertext, _signature = enrico.encrypt_message(plaintext)
-            data_source_public_key = bytes(enrico.stamp)
-            enrico_as_understood_by_bob = Enrico.from_public_keys(verifying_key=data_source_public_key,policy_encrypting_key=getPolicyKey(pubkey))
-            alicepubkey = UmbralPublicKey.from_bytes(posterstamp)
-            delivered_cleartexts = BOB.retrieve(message_kit=single_passage_ciphertext,data_source=enrico_as_understood_by_bob,alice_verifying_key=alicepubkey,label=bytes(passlabel))
-            decryptedfulltext.append(delivered_cleartexts)
+            for counter, plaintext in enumerate(cleartext):
+                enrico = Enrico(policy_encrypting_key=pubkey)
+                single_passage_ciphertext, _signature = enrico.encrypt_message(plaintext)
+                data_source_public_key = bytes(enrico.stamp)
+                enrico_as_understood_by_bob = Enrico.from_public_keys(verifying_key=data_source_public_key,policy_encrypting_key=pubkey)
+                alicepubkey = UmbralPublicKey.from_bytes(posterstamp)
+                delivered_cleartexts = BOB.retrieve(message_kit=single_passage_ciphertext,data_source=enrico_as_understood_by_bob,alice_verifying_key=alicepubkey,label=bytes(passlabel))
+                decryptedfulltext.append(delivered_cleartexts)
         return decryptedfulltext
     else:
         return make_response(jsonify({'error': 'data not found'}), 404)
