@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 from flask import jsonify, request, make_response, send_from_directory, url_for, Response
 from app import app, mongo
 import logger
@@ -14,6 +15,7 @@ from nucypher.characters.lawful import Alice, Bob, Ursula
 from nucypher.characters.lawful import Enrico as Enrico
 from nucypher.network.middleware import RestMiddleware
 from nucypher.utilities.logging import SimpleObserver
+from nucypher.crypto.powers import SigningPower
 
 SEEDNODE_URI = "https://localhost:11501"
 
@@ -42,19 +44,21 @@ def sha256sum(filename):
 
 def decrypt(enchash, passlabel):
     data = mongo.db.encrypted.find_one({"hash": enchash})
-    pubkey, posterstamp = getPolicyKey(data['policy'])
+    polpass, pubkey, posterstamp = getPolicyKey(data['policy'])
+    print(polpass)
     decryptedfulltext = ""
     if data is not None:
         with open((os.path.join(app.config['UPLOAD_FOLDER'], data['name'])), 'rb') as file:
-            cleartext = file.readlines()
+            cleartext = file.readlines()[:25]
             for counter, plaintext in enumerate(cleartext):
-                enrico = Enrico(policy_encrypting_key=pubkey)
+                enrico = Enrico(policy_encrypting_key=pubkey.public_key)
                 single_passage_ciphertext, _signature = enrico.encrypt_message(plaintext)
                 data_source_public_key = bytes(enrico.stamp)
-                enrico_as_understood_by_bob = Enrico.from_public_keys(verifying_key=data_source_public_key,policy_encrypting_key=pubkey)
+                enrico_as_understood_by_bob = Enrico.from_public_keys( {SigningPower: data_source_public_key},policy_encrypting_key=pubkey.public_key)
                 alicepubkey = UmbralPublicKey.from_bytes(posterstamp)
-                delivered_cleartexts = BOB.retrieve(message_kit=single_passage_ciphertext,data_source=enrico_as_understood_by_bob,alice_verifying_key=alicepubkey,label=bytes(passlabel))
-                decryptedfulltext.append(delivered_cleartexts)
+                delivered_cleartexts = BOB.retrieve(message_kit=single_passage_ciphertext,data_source=enrico_as_understood_by_bob,alice_verifying_key=alicepubkey,label=polpass)
+                #decryptedfulltext.append(delivered_cleartexts)
+                print(decryptedfulltext)
         return decryptedfulltext
     else:
         return make_response(jsonify({'error': 'data not found'}), 404)
@@ -69,7 +73,7 @@ def getPolicyKey(n):
         ap1 = bytes(ALICE.stamp)
         if activepolicy.public_key == policy1_pubkey:
             print("key 1 is created and in scope")
-        return policy1_pubkey, ap1
+        return policy1pass,activepolicy, ap1
     if n == 2:
         #policy2
         policy2pass = b'ethglobal'
@@ -79,7 +83,7 @@ def getPolicyKey(n):
         ap2 = bytes(ALICE.stamp)
         if activepolicy.public_key == policy2_pubkey:
             print("key 2 is created and in scope")
-        return policy2_pubkey, ap2
+        return activepolicy, ap2
 
 
 def allowed_file(filename):
