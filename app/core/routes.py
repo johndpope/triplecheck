@@ -20,8 +20,8 @@ SEEDNODE_URI = "https://localhost:11501"
 ROOT_PATH = os.environ.get('ROOT_PATH')
 LOG = logger.get_root_logger(__name__, filename=os.path.join(ROOT_PATH, 'output.log'))
 
-UPLOAD_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/uploads'
-ENCRYPTED_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/encrypted'
+UPLOAD_FOLDER = '/home/ubuntu/triplecheck/uploads'
+ENCRYPTED_FOLDER = '/home/ubuntu/triplecheck/encrypted'
 ALLOWED_EXTENSIONS = set(['txt', 'jpg', 'jpeg'])
 
 # Connect to Ursula

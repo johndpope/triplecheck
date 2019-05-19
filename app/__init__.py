@@ -31,8 +31,8 @@ class JSONEncoder(json.JSONEncoder):
 
 
 # Flask Upload & allowed extensions config
-UPLOAD_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/uploads'
-ENCRYPTED_FOLDER = '/Users/Harish1/Desktop/work/ethnyc/triplecheck/encrypted'
+UPLOAD_FOLDER = '/home/ubuntu/triplecheck/uploads'
+ENCRYPTED_FOLDER = '/home/ubuntu/triplecheck/encrypted'
 ALLOWED_EXTENSIONS = set(['txt', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
