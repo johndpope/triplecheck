@@ -10,6 +10,7 @@ import maya
 from twisted.logger import globalLogPublisher
 from umbral.keys import UmbralPublicKey
 import hashlib
+from bson.json_util import dumps
 
 from nucypher.characters.lawful import Alice, Bob, Ursula
 from nucypher.characters.lawful import Enrico as Enrico
@@ -168,7 +169,8 @@ def index():
     """ static files serve """
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-
-
-
+@app.route('/listEncryptedFiles', methods=['GET', 'POST'])   #ID, Filename, Hash, Expiration, URL
+def listefiles():
+    data = dumps(mongo.db.encrypted.find())
+    return data
 
