@@ -71,4 +71,9 @@ This will expose the following endpoints
  
  [Decrypt Endpoint](http://ec2-18-204-34-34.compute-1.amazonaws.com:5000/decrypt) 
  
- Use "910e70066195060e29f2c0e986e5859d211d5a381951a847185c7aa3a7831a7e" for the first box. "ethnewyork" for second box and hit decrypt.
+The default demo policies are set with the following passwords
+
+policy 1 = ethnewyork
+policy 2 = ethglobal
+
+Both have a 30 day expiry set on it.
