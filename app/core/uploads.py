@@ -1,27 +1,21 @@
-#!/usr/bin/env python
 import os
-import json
-from flask import Flask, flash, request, redirect, url_for, Response, jsonify
-from werkzeug.utils import secure_filename
-from flask import send_from_directory
+from flask import jsonify, request, make_response, send_from_directory
+from app import app, mongo
+import logger
 
-UPLOAD_FOLDER = '/home/ubuntu/triplecheck/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'jpg', 'jpeg'])
-
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ROOT_PATH = os.environ.get('ROOT_PATH')
+LOG = logger.get_root_logger(__name__, filename=os.path.join(ROOT_PATH, 'output.log'))
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/')
-def index():
-    return "Welcome to nucypher node server - index"
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        if request.form['policy'] == "policy1":
+            setpolicy = 1
+        if request.form['policy'] == "policy2":
+            setpolicy = 2
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -32,8 +26,11 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #encrypt to provided policy
+            encryptedByteArray = bytearray(encrypt(setpolicy,file))
+            encryptedByteArray.save(os.path.join(app.config['ENCRYPTED_FOLDER'], filename))
             jsresp = [ { "name" : filename, "url" : url_for('uploaded_file', filename=filename)} ]
-            return Response(json.dumps(jsresp),  mimetype='application/json')
+            return Response(json.dumps(jsresp),  mimetype='application/json')    #Change response to 200 OK
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -47,6 +44,3 @@ def upload_file():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
