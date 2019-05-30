@@ -1,3 +1,5 @@
+# ETHNewYork 2019 Hackathon Submission 
+
 # TripleCheck - Anti Deepfakes/Fake News through provenance networks
 
 TripleCheck implements content publishing, encryption/decryption, and verification of published content. Users can login/signup using Fortmatic for easy on-boarding. Users can then create encryption policies for the content they produce. The publishers can then grant access to users in the platform with a set expiry date or publish directly to decentralized outlets like IPFS, Swarm. Platform members can verify hashes for privately shared content. The public can verify hashes for all TripleCheck enabled content that is published over the social medias, referenced in articles or news publications.
